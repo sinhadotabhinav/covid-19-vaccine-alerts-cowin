@@ -60,19 +60,19 @@ async function getAppointmentsByDistrict(dates) {
   let slotsArray = [];
   try {
     let stateId = await locations.getStateId(appConfig.STATE);
-    let districtID = await locations.getDistrictId(stateId, appConfig.DISTRICT);
+    let districtId = await locations.getDistrictId(stateId, appConfig.DISTRICT);
     if (stateId == undefined) {
       throw 'Unable to find state id. Please verify state name in config file: src/config/appConfig.js';
-    } else if (districtID == undefined) {
+    } else if (districtId == undefined) {
       throw 'Unable to find district id. Please verify district name in config file: src/config/appConfig.js';
     }
     for await (const date of dates) {
-      let slots = await routes.getVaccinationSlotsByDistrict(districtID, date)
+      let slots = await routes.getVaccinationSlotsByDistrict(districtId, date)
         .then(function (result) {
           return appointments.getFilteredSlots(date, result.data.sessions);
         })
         .catch(function (error) {
-          console.log('Unable to get appointment slots at district: ' + districtID + ' for the date: ' + date + ', ' + error.response.statusText);
+          console.log('Unable to get appointment slots at district: ' + districtId + ' for the date: ' + date + ', ' + error.response.statusText);
         });
       slotsArray.push(slots);
     };
