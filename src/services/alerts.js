@@ -1,20 +1,21 @@
 let mailer = require('nodemailer');
 const appConfig = require('../config/appConfig');
+const mailConfig = require('../config/mailConfig');
 
 let mailerTransport = mailer.createTransport({
-  service: 'Gmail',
+  service: mailConfig.SERVICE_PROVIDER,
   auth: {
     user: String(appConfig.EMAIL),
     pass: String(process.env.APPLICATION_PASSWORD)
   }
 });
 
-function sendEmailAlert (subject, slotDetails, callback) {
+function sendEmailAlert (slotDetails, callback) {
   let options = {
-    from: String('Vaccine Checker ' + appConfig.EMAIL),
+    from: String(mailConfig.SENDER + appConfig.EMAIL),
     to: appConfig.EMAIL,
-    subject: subject,
-    text: 'Vaccine available. Find details below: \n\n' + slotDetails
+    subject: mailConfig.SUBJECT,
+    text: mailConfig.BODY + slotDetails
   };
   mailerTransport.sendMail(options, (error, info) => {
     if (error) {

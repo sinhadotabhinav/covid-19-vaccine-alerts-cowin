@@ -6,11 +6,12 @@ const alerts = require('./services/alerts');
 const routes = require('./api/routes');
 const locations = require('./utilities/locations');
 const appConfig = require('./config/appConfig');
+const schedulerConfig = require('./config/schedulerConfig');
 
 async function main() {
   try {
-    await fetchVaccineSlots();
-    // cron.schedule('* * * * *', async () => {
+    await fetchVaccinationSlots();
+    // cron.schedule(schedulerConfig.SCHEDULE, async () => {
       // await fetchVaccineSlots();
     // });
   } catch (e) {
@@ -19,7 +20,7 @@ async function main() {
   }
 }
 
-async function fetchVaccineSlots() {
+async function fetchVaccinationSlots() {
   let dates = await getTwoWeekDateArray();
   console.log(dates);
   try {
@@ -42,7 +43,7 @@ async function fetchVaccineSlots() {
 async function getAppointmentsByPincode(dates) {
   let slotsArray = [];
   for await (const date of dates) {
-    let slots = await routes.getVaccineSessionsByPincode(appConfig.PINCODE, date)
+    let slots = await routes.getVaccinationSlotsByPincode(appConfig.PINCODE, date)
       .then(function (result) {
         let sessions = result.data.sessions;
         let validSlots = sessions.filter(slot => slot.min_age_limit <= appConfig.AGE && slot.available_capacity > 0)
@@ -69,7 +70,7 @@ async function getAppointmentsByPincode(dates) {
       });
     slotsArray.push(slots);
   };
-  notifyMe(slotsArray);
+  sendEmailAlert(slotsArray);
 }
 
 async function getAppointmentsByDistrict(dates) {
@@ -83,7 +84,7 @@ async function getAppointmentsByDistrict(dates) {
       throw 'Unable to find district id. Please verify district name in config file: src/config/appConfig.js';
     }
     for await (const date of dates) {
-      let slots = await routes.getVaccineSessionsByDistrict(districtID, date)
+      let slots = await routes.getVaccinationSlotsByDistrict(districtID, date)
         .then(function (result) {
           let sessions = result.data.sessions;
           let validSlots = sessions.filter(slot => slot.min_age_limit <= appConfig.AGE && slot.available_capacity > 0)
@@ -130,7 +131,7 @@ async function getTwoWeekDateArray() {
 async function sendEmailAlert(array) {
   let slotDetails = JSON.stringify(array, null, '\t');
   console.log(slotDetails);
-  // alerts.sendEmailAlert(appConfig.EMAIL, 'VACCINE AVAILABLE', slotDetails, (err, result) => {
+  // alerts.sendEmailAlert(slotDetails, (err, result) => {
   //   if(err) {
   //     console.error({err});
   //   }

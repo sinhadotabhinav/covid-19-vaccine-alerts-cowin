@@ -39,7 +39,7 @@ async function getDistricts(districtId) {
     })
 }
 
-async function getVaccineSessionsByPincode(pinCode, date) {
+async function getVaccinationSlotsByPincode(pinCode, date) {
   let config = {
     method: apiConfig.HTTP_GET,
     url: apiConfig.BASE_URL + apiConfig.APPOINTMENTS_PINCODE_URI + '?pincode=' + pinCode + '&date=' + date,
@@ -58,7 +58,7 @@ async function getVaccineSessionsByPincode(pinCode, date) {
     })
 }
 
-async function getVaccineSessionsByDistrict(districtId, date) {
+async function getVaccinationSlotsByDistrict(districtId, date) {
   let config = {
     method: apiConfig.HTTP_GET,
     url: apiConfig.BASE_URL + apiConfig.APPOINTMENTS_DISTRICTS_URI + '?district_id=' + districtId + '&date=' + date,
@@ -77,4 +77,4 @@ async function getVaccineSessionsByDistrict(districtId, date) {
     })
 }
 
-module.exports = { getStates, getDistricts, getVaccineSessionsByPincode, getVaccineSessionsByDistrict };
+module.exports = { getStates, getDistricts, getVaccinationSlotsByPincode, getVaccinationSlotsByDistrict };
