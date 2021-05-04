@@ -110,7 +110,7 @@ async function getAppointmentsByDistrict(dates) {
         });
       slotsArray.push(slots);
     };
-    notifyMe(slotsArray);
+    sendEmailAlert(slotsArray);
   } catch (e) {
     console.log(e);
   }
@@ -127,7 +127,7 @@ async function getTwoWeekDateArray() {
   return dateArray;
 }
 
-async function notifyMe(array) {
+async function sendEmailAlert(array) {
   let slotDetails = JSON.stringify(array, null, '\t');
   console.log(slotDetails);
   // alerts.sendEmailAlert(appConfig.EMAIL, 'VACCINE AVAILABLE', slotDetails, (err, result) => {
