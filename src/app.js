@@ -84,11 +84,11 @@ async function getAppointmentsByDistrict(dates) {
 
 async function getTwoWeekDateArray() {
   let dateArray = [];
-  let today = moment();
+  let currentDate = moment();
   for(let counter = 0; counter < 2; counter ++) {
-    let date = today.format('DD-MM-YYYY')
+    let date = currentDate.format(schedulerConfig.DATE_FORMAT);
     dateArray.push(date);
-    today.add(1, 'day');
+    currentDate.add(1, 'day');
   }
   return dateArray;
 }
@@ -105,5 +105,5 @@ async function sendEmailAlert(array) {
 };
 
 main().then(() => {
-  console.log('Vaccine availability checker started.');
+  console.log('The covid-19 vaccine alerting application has started!');
 });
