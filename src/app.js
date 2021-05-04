@@ -2,11 +2,12 @@ require('dotenv').config()
 const moment = require('moment');
 const cron = require('node-cron');
 const axios = require('axios');
+const appConfig = require('./config/appConfig');
+const schedulerConfig = require('./config/schedulerConfig');
 const alerts = require('./services/alerts');
 const routes = require('./api/routes');
 const locations = require('./utilities/locations');
-const appConfig = require('./config/appConfig');
-const schedulerConfig = require('./config/schedulerConfig');
+const appointments = require('./utilities/appointments');
 
 async function main() {
   try {
@@ -45,25 +46,7 @@ async function getAppointmentsByPincode(dates) {
   for await (const date of dates) {
     let slots = await routes.getVaccinationSlotsByPincode(appConfig.PINCODE, date)
       .then(function (result) {
-        let sessions = result.data.sessions;
-        let validSlots = sessions.filter(slot => slot.min_age_limit <= appConfig.AGE && slot.available_capacity > 0)
-        if(validSlots.length > 0) {
-          console.log({date:date, validSlots: validSlots.length})
-        }
-        for(var counter = 0; counter < validSlots.length; counter++) {
-          delete validSlots[counter]['center_id'];
-          delete validSlots[counter]['lat'];
-          delete validSlots[counter]['long'];
-          delete validSlots[counter]['fee'];
-          // delete validSlots[counter]['date'];
-          delete validSlots[counter]['session_id'];
-          delete validSlots[counter]['from'];
-          delete validSlots[counter]['to'];
-          // delete validSlots[counter]['pincode'];
-          delete validSlots[counter]['block_name'];
-        }
-        console.log('slots returned for date: ' + date);
-        return validSlots;
+        return appointments.getFilteredSlots(date, result.data.sessions);
       })
       .catch(function (error) {
         console.log('Unable to get appointment slots at pincode: ' + appConfig.PINCODE + ' for the date: ' + date + ', ' + error.response.statusText);
@@ -86,25 +69,7 @@ async function getAppointmentsByDistrict(dates) {
     for await (const date of dates) {
       let slots = await routes.getVaccinationSlotsByDistrict(districtID, date)
         .then(function (result) {
-          let sessions = result.data.sessions;
-          let validSlots = sessions.filter(slot => slot.min_age_limit <= appConfig.AGE && slot.available_capacity > 0)
-          if(validSlots.length > 0) {
-            console.log({date:date, validSlots: validSlots.length})
-          }
-          for(var counter = 0; counter < validSlots.length; counter++) {
-            delete validSlots[counter]['center_id'];
-            delete validSlots[counter]['lat'];
-            delete validSlots[counter]['long'];
-            delete validSlots[counter]['fee'];
-            // delete validSlots[counter]['date'];
-            delete validSlots[counter]['session_id'];
-            delete validSlots[counter]['from'];
-            delete validSlots[counter]['to'];
-            // delete validSlots[counter]['pincode'];
-            delete validSlots[counter]['block_name'];
-          }
-          console.log('slots returned for date: ' + date);
-          return validSlots;
+          return appointments.getFilteredSlots(date, result.data.sessions);
         })
         .catch(function (error) {
           console.log('Unable to get appointment slots at district: ' + districtID + ' for the date: ' + date + ', ' + error.response.statusText);
@@ -120,7 +85,7 @@ async function getAppointmentsByDistrict(dates) {
 async function getTwoWeekDateArray() {
   let dateArray = [];
   let today = moment();
-  for(let counter = 0; counter < 3; counter ++) {
+  for(let counter = 0; counter < 2; counter ++) {
     let date = today.format('DD-MM-YYYY')
     dateArray.push(date);
     today.add(1, 'day');
@@ -129,8 +94,9 @@ async function getTwoWeekDateArray() {
 }
 
 async function sendEmailAlert(array) {
+  console.log(array);
   let slotDetails = JSON.stringify(array, null, '\t');
-  console.log(slotDetails);
+  // console.log(slotDetails);
   // alerts.sendEmailAlert(slotDetails, (err, result) => {
   //   if(err) {
   //     console.error({err});

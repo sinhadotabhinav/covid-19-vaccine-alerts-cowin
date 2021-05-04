@@ -1,3 +1,3 @@
 const SCHEDULE = '* * * * *';
 
-module.exports = SCHEDULE;
+module.exports = { SCHEDULE };
