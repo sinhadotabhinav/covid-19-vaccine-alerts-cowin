@@ -5,20 +5,63 @@ function getFilteredSlots (date, sessions) {
   if(validSlots.length > 0) {
     console.log({date:date, validSlots: validSlots.length})
   }
-  for(var counter = 0; counter < validSlots.length; counter++) {
-    delete validSlots[counter]['center_id'];
-    delete validSlots[counter]['lat'];
-    delete validSlots[counter]['long'];
-    delete validSlots[counter]['fee'];
-    // delete validSlots[counter]['date'];
-    delete validSlots[counter]['session_id'];
-    delete validSlots[counter]['from'];
-    delete validSlots[counter]['to'];
-    // delete validSlots[counter]['pincode'];
-    delete validSlots[counter]['block_name'];
-  }
   console.log('slots returned for date: ' + date);
   return validSlots;
 };
 
-module.exports = { getFilteredSlots };
+async function prepareHtmlBody(outputArray) {
+  let html = `<html>
+  <head>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Vaccine Availability Table</h2>
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Date</th>
+        <th>District</th>
+        <th>Center Name</th>
+        <th>Center Address</th>
+        <th>Pincode</th>
+        <th>Vaccine Name</th>
+        <th>Mininum Age Limit</th>
+        <th>Availability Capacity</th>
+        <th>Available Slots</th>
+        <th>Fee Type</th>
+      </tr>\n`;
+  for (let counter = 0; counter < outputArray.length; counter++) {
+    html = html +
+    `      <tr>
+        <td>${counter + 1}</td>
+        <td>${outputArray[counter].date}</td>
+        <td>${outputArray[counter].district_name}</td>
+        <td>${outputArray[counter].name}</td>
+        <td>${outputArray[counter].address}</td>
+        <td>${outputArray[counter].pincode}</td>
+        <td>${outputArray[counter].vaccine}</td>
+        <td>${outputArray[counter].min_age_limit}</td>
+        <td>${outputArray[counter].available_capacity}</td>
+        <td>${outputArray[counter].slots}</td>
+        <td>${outputArray[counter].fee_type}</td>
+      </tr>\n`;
+  }
+  html = html + `  </table>\n </body>\n</html>`;
+  return html;
+}
+
+module.exports = { getFilteredSlots, prepareHtmlBody };

@@ -23,7 +23,6 @@ async function main() {
 
 async function fetchVaccinationSlots() {
   let dates = await getTwoWeekDateArray();
-  console.log(dates);
   try {
     if (Boolean(appConfig.FINDBYPINCODE)) {
       if (appConfig.PINCODE.toString().length < 6) {
@@ -49,6 +48,7 @@ async function getAppointmentsByPincode(dates) {
         return appointments.getFilteredSlots(date, result.data.sessions);
       })
       .catch(function (error) {
+        // console.log(error.response);
         console.log('Unable to get appointment slots at pincode: ' + appConfig.PINCODE + ' for the date: ' + date + ', ' + error.response.statusText);
       });
     slotsArray.push(slots);
@@ -85,7 +85,7 @@ async function getAppointmentsByDistrict(dates) {
 async function getTwoWeekDateArray() {
   let dateArray = [];
   let currentDate = moment();
-  for(let counter = 0; counter < 2; counter ++) {
+  for(let counter = 0; counter < 2; counter++) {
     let date = currentDate.format(schedulerConfig.DATE_FORMAT);
     dateArray.push(date);
     currentDate.add(1, 'day');
@@ -93,15 +93,24 @@ async function getTwoWeekDateArray() {
   return dateArray;
 }
 
-async function sendEmailAlert(array) {
-  console.log(array);
-  let slotDetails = JSON.stringify(array, null, '\t');
-  // console.log(slotDetails);
-  // alerts.sendEmailAlert(slotDetails, (err, result) => {
-  //   if(err) {
-  //     console.error({err});
-  //   }
-  // })
+async function sendEmailAlert(slotsArray) {
+  let outputArray = [];
+  if (slotsArray[0] == undefined) {
+    console.log('No sessions to process at this time');
+  } else {
+    for(let counter1 = 0; counter1 < slotsArray.length; counter1++) {
+      for(let counter2 = 0; counter2 < slotsArray[counter1].length; counter2++) {
+        outputArray.push(slotsArray[counter1][counter2]);
+      }
+    }
+    let htmlBody = await appointments.prepareHtmlBody(outputArray);
+    console.log(htmlBody);
+    // alerts.sendEmailAlert(htmlBody, (err, result) => {
+    //   if(err) {
+    //     console.error({err});
+    //   }
+    // })
+  }
 };
 
 main().then(() => {

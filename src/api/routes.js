@@ -50,6 +50,7 @@ async function getVaccinationSlotsByPincode(pinCode, date) {
   };
   return axios(config)
     .then(function (result) {
+      console.log(result.status);
       if (result.status == apiConfig.STATUS_OK) {
         return result;
       } else {
