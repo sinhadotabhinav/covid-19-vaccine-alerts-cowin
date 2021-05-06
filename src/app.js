@@ -14,10 +14,9 @@ let vaccinationSlots = [];
 
 async function main() {
   try {
-    await fetchVaccinationSlots();
-    // cron.schedule(schedulerConfig.SCHEDULE, async () => {
-    //   await fetchVaccinationSlots();
-    // });
+    cron.schedule(schedulerConfig.SCHEDULE, async () => {
+      await fetchVaccinationSlots();
+    });
   } catch (e) {
     console.log('There was an error fetching vaccine slots: ' + JSON.stringify(e, null, 2));
     throw e;
