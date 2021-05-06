@@ -48,7 +48,6 @@ async function getAppointmentsByPincode(dates) {
         return appointments.getFilteredSlots(date, result.data.sessions);
       })
       .catch(function (error) {
-        // console.log(error.response);
         console.log('Unable to get appointment slots at pincode: ' + appConfig.PINCODE + ' for the date: ' + date + ', ' + error.response.statusText);
       });
     slotsArray.push(slots);
@@ -105,11 +104,11 @@ async function sendEmailAlert(slotsArray) {
     }
     let htmlBody = await appointments.prepareHtmlBody(outputArray);
     console.log(htmlBody);
-    // alerts.sendEmailAlert(htmlBody, (err, result) => {
-    //   if(err) {
-    //     console.error({err});
-    //   }
-    // })
+    alerts.sendEmailAlert(htmlBody, (err, result) => {
+      if(err) {
+        console.error({err});
+      }
+    })
   }
 };
 
