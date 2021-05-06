@@ -75,12 +75,22 @@ async function prepareHtmlBody(outputArray) {
   }
   html = html + `   </table>\n </body>\n
   <br>
-  <a href="https://www.cowin.gov.in/home">
-    <img
-      src="https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/assets/cowin-logo.png?raw=true"
-      style=
-      alt="COWIN platform">
-  </a>\n</html>`;
+  <div style="display: flex;">
+    <div style="flex: 50%; padding: 5px;">
+      <a href="https://www.cowin.gov.in/home">
+        <img
+          src="https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/assets/cowin-logo.png?raw=true"
+          alt="COWIN platform">
+      </a>
+    </div>
+    <div style="flex: 50%; padding: 5px;">
+      <a href="https://www.mohfw.gov.in/covid_vaccination/vaccination/faqs.html">
+        <img
+          src="https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/assets/vaccine.png?raw=true"
+          alt="MOHFW India">
+      </a>
+    </div>
+  </div>\n</html>`;
   return html;
 }
 
