@@ -8,6 +8,7 @@ const alerts = require('./services/alerts');
 const routes = require('./api/routes');
 const locations = require('./utilities/locations');
 const appointments = require('./utilities/appointments');
+const htmlBuilder = require('./utilities/htmlBuilder');
 
 async function main() {
   try {
@@ -102,7 +103,7 @@ async function sendEmailAlert(slotsArray) {
         outputArray.push(slotsArray[counter1][counter2]);
       }
     }
-    let htmlBody = await appointments.prepareHtmlBody(outputArray);
+    let htmlBody = await htmlBuilder.prepareHtmlBody(outputArray);
     alerts.sendEmailAlert(htmlBody, (err, result) => {
       if(err) {
         console.error({err});
