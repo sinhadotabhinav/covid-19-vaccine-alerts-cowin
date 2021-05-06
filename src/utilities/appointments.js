@@ -23,7 +23,7 @@ async function prepareHtmlBody(outputArray) {
         background-color: #f1f1f1;
         font-size: 9pt;
         border: 1px solid #dddddd;
-        text-align: center;
+        text-align: left;
         padding: 8px;
       }
       td {
@@ -31,6 +31,12 @@ async function prepareHtmlBody(outputArray) {
         text-align: left;
         font-size: 8pt;
         padding: 8px;
+      }
+      img {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+        width: 150px;
       }
     </style>
   </head>
@@ -68,7 +74,13 @@ async function prepareHtmlBody(outputArray) {
       </tr>\n`;
   }
   html = html + `   </table>\n </body>\n
-  <img src="https://png.pngtree.com/png-clipart/20190520/original/pngtree-the-online-exchange-of-xie-and-cooperation-platform-png-image_3737643.jpg" alt="COWIN platform">\n</html>`;
+  <br>
+  <a href="https://www.cowin.gov.in/home">
+    <img
+      src="https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/assets/cowin-logo.png?raw=true"
+      style=
+      alt="COWIN platform">
+  </a>\n</html>`;
   return html;
 }
 
