@@ -12,8 +12,8 @@ let mailerTransport = mailer.createTransport({
 
 function sendEmailAlert (htmlBody, callback) {
   let options = {
-    from: String(mailConfig.SENDER + appConfig.EMAIL),
-    to: appConfig.EMAIL,
+    from: String(mailConfig.SENDER + `<${appConfig.EMAIL}>`),
+    to: mailConfig.RECIPIENT,
     subject: mailConfig.SUBJECT,
     text: mailConfig.BODY,
     html: htmlBody

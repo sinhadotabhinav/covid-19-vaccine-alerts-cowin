@@ -1,4 +1,4 @@
-const FINDBYPINCODE = false;
+const FINDBYPINCODE = true;
 // location configs
 const PINCODE = 800001;
 const STATE = 'BIHAR';

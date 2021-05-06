@@ -84,7 +84,7 @@ async function getAppointmentsByDistrict(dates) {
 async function getTwoWeekDateArray() {
   let dateArray = [];
   let currentDate = moment();
-  for(let counter = 0; counter < 2; counter++) {
+  for(let counter = 0; counter < 1; counter++) {
     let date = currentDate.format(schedulerConfig.DATE_FORMAT);
     dateArray.push(date);
     currentDate.add(1, 'day');
@@ -103,7 +103,6 @@ async function sendEmailAlert(slotsArray) {
       }
     }
     let htmlBody = await appointments.prepareHtmlBody(outputArray);
-    console.log(htmlBody);
     alerts.sendEmailAlert(htmlBody, (err, result) => {
       if(err) {
         console.error({err});
