@@ -9,4 +9,19 @@ function getFilteredSlots (date, sessions) {
   return validSlots;
 };
 
-module.exports = { getFilteredSlots };
+async function compareVaccinationSlots(outputArray, vaccinationSlots) {
+  if (outputArray.length == vaccinationSlots.length) {
+    let equalCount = 0;
+    for(let counter = 0; counter < outputArray.length; counter++) {
+      if (JSON.stringify(outputArray[counter]) == JSON.stringify(vaccinationSlots[counter])) {
+        equalCount = equalCount + 1;
+      }
+    }
+    if (equalCount == outputArray.length) {
+      return true;
+    }
+  }
+  return false;
+}
+
+module.exports = { getFilteredSlots, compareVaccinationSlots };

@@ -10,12 +10,13 @@ const locations = require('./utilities/locations');
 const appointments = require('./utilities/appointments');
 const htmlBuilder = require('./utilities/htmlBuilder');
 
+let vaccinationSlots = [];
+
 async function main() {
   try {
-    await fetchVaccinationSlots();
-    // cron.schedule(schedulerConfig.SCHEDULE, async () => {
-      // await fetchVaccineSlots();
-    // });
+    cron.schedule(schedulerConfig.SCHEDULE, async () => {
+      await fetchVaccinationSlots();
+    });
   } catch (e) {
     console.log('There was an error fetching vaccine slots: ' + JSON.stringify(e, null, 2));
     throw e;
@@ -103,12 +104,17 @@ async function sendEmailAlert(slotsArray) {
         outputArray.push(slotsArray[counter1][counter2]);
       }
     }
-    let htmlBody = await htmlBuilder.prepareHtmlBody(outputArray);
-    alerts.sendEmailAlert(htmlBody, (err, result) => {
-      if(err) {
-        console.error({err});
-      }
-    })
+    if (Boolean(await appointments.compareVaccinationSlots(outputArray, vaccinationSlots))) {
+      console.log('No new sessions to process at this time');
+    } else {
+      let htmlBody = await htmlBuilder.prepareHtmlBody(outputArray);
+      vaccinationSlots = outputArray;
+      alerts.sendEmailAlert(htmlBody, (err, result) => {
+        if(err) {
+          console.error({err});
+        }
+      })
+    }
   }
 };
 

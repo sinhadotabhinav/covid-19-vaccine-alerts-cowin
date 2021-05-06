@@ -64,7 +64,7 @@ async function prepareHtmlBody(outputArray) {
       </tr>\n`;
   }
   html = html + `   </table>\n </body>\n
-  <br>
+  <br><br><br>
   <div style="display: flex;">
     <div style="flex: 50%; padding: 5px;">
       <a href="https://www.cowin.gov.in/home">
