@@ -1,6 +1,6 @@
-const FINDBYPINCODE = false;
+const FINDBYPINCODE = true;
 // location configs
-const PINCODE = '800001';
+const PINCODE = '800001,800002,800012,800013';
 const STATE = 'BIHAR';
 const DISTRICT = 'PATNA';
 // beneficiary configs

@@ -126,6 +126,8 @@ async function sendEmailAlert(slotsArray) {
       alerts.sendEmailAlert(htmlBody, (err, result) => {
         if(err) {
           console.error({err});
+        } else {
+          console.log('New sessions have been processed and sent as an email alert');
         }
       })
     }
