@@ -14,9 +14,10 @@ let vaccinationSlots = [];
 
 async function main() {
   try {
-    cron.schedule(schedulerConfig.SCHEDULE, async () => {
-      await fetchVaccinationSlots();
-    });
+    await fetchVaccinationSlots();
+    // cron.schedule(schedulerConfig.SCHEDULE, async () => {
+    //   await fetchVaccinationSlots();
+    // });
   } catch (e) {
     console.log('There was an error fetching vaccine slots: ' + JSON.stringify(e, null, 2));
     throw e;
@@ -25,12 +26,24 @@ async function main() {
 
 async function fetchVaccinationSlots() {
   let dates = await getTwoWeekDateArray();
+  let pincodeArray = [];
   try {
     if (Boolean(appConfig.FINDBYPINCODE)) {
-      if (appConfig.PINCODE.toString().length < 6) {
+      if (appConfig.PINCODE.includes(',')) {
+        let pincodeArray = appConfig.PINCODE.split(',');
+        for( counter = 0; counter < pincodeArray.length; counter++) {
+          if (pincodeArray[counter].toString().length < 6) {
+            console.log('Invalid pincode ' + pincodeArray[counter] + ' provided in config file: (src/config/appConfig.js)');
+            pincodeArray.splice(counter, 1);
+          }
+        }
+        getAppointmentsByPincode(pincodeArray, dates);
+      } else if (appConfig.PINCODE.toString().length < 6) {
         throw 'Application is set to fetch vaccine slots by pincode but no pincode/ invalid pincode provided in config file: (src/config/appConfig.js)';
+      } else {
+        pincodeArray.push(appConfig.PINCODE);
+        getAppointmentsByPincode(pincodeArray, dates);
       }
-      getAppointmentsByPincode(dates);
     } else {
       if (appConfig.DISTRICT.length == 0) {
         throw 'Application is set to fetch vaccine slots by district but no district name provided in config file: (src/config/appConfig.js)';
@@ -42,17 +55,19 @@ async function fetchVaccinationSlots() {
   }
 }
 
-async function getAppointmentsByPincode(dates) {
+async function getAppointmentsByPincode(pincodeArray, dates) {
   let slotsArray = [];
   for await (const date of dates) {
-    let slots = await routes.getVaccinationSlotsByPincode(appConfig.PINCODE, date)
-      .then(function (result) {
-        return appointments.getFilteredSlots(date, result.data.sessions);
-      })
-      .catch(function (error) {
-        console.log('Unable to get appointment slots at pincode: ' + appConfig.PINCODE + ' for the date: ' + date + ', ' + error.response.statusText);
-      });
-    slotsArray.push(slots);
+    for await (const pin of pincodeArray) {
+      let slots = await routes.getVaccinationSlotsByPincode(pin, date)
+        .then(function (result) {
+          return appointments.getFilteredSlots(date, result.data.sessions);
+        })
+        .catch(function (error) {
+          console.log('Unable to get appointment slots at pincode: ' + pin + ' for the date: ' + date + ', ' + error.response.statusText);
+        });
+      slotsArray.push(slots);
+    };
   };
   sendEmailAlert(slotsArray);
 }
@@ -86,7 +101,7 @@ async function getAppointmentsByDistrict(dates) {
 async function getTwoWeekDateArray() {
   let dateArray = [];
   let currentDate = moment();
-  for(let counter = 0; counter < 1; counter++) {
+  for(let counter = 1; counter <= schedulerConfig.DATE_RANGE; counter++) {
     let date = currentDate.format(schedulerConfig.DATE_FORMAT);
     dateArray.push(date);
     currentDate.add(1, 'day');

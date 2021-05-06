@@ -1,10 +1,10 @@
-const FINDBYPINCODE = true;
+const FINDBYPINCODE = false;
 // location configs
-const PINCODE = 800001;
+const PINCODE = '800001';
 const STATE = 'BIHAR';
 const DISTRICT = 'PATNA';
 // beneficiary configs
 const EMAIL = 'asinha093@gmail.com';
-const AGE = 45;
+const AGE = 28;
 
 module.exports = { FINDBYPINCODE, PINCODE, STATE, DISTRICT, EMAIL, AGE };
