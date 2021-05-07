@@ -1,6 +1,6 @@
 let mailer = require('nodemailer');
-const appConfig = require('../config/appConfig');
-const mailConfig = require('../config/mailConfig');
+const appConfig = require('../configs/appConfig');
+const mailConfig = require('../configs/mailConfig');
 
 let mailerTransport = mailer.createTransport({
   service: mailConfig.SERVICE_PROVIDER,

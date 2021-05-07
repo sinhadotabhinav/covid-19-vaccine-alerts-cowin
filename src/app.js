@@ -2,8 +2,8 @@ require('dotenv').config()
 const moment = require('moment');
 const cron = require('node-cron');
 const axios = require('axios');
-const appConfig = require('./config/appConfig');
-const schedulerConfig = require('./config/schedulerConfig');
+const appConfig = require('./configs/appConfig');
+const schedulerConfig = require('./configs/schedulerConfig');
 const alerts = require('./services/alerts');
 const routes = require('./api/routes');
 const locations = require('./utilities/locations');

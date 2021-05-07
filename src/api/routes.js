@@ -1,5 +1,5 @@
 const axios = require('axios');
-const apiConfig = require('../config/apiConfig');
+const apiConfig = require('../configs/apiConfig');
 
 async function getStates() {
   let config = {

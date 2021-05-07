@@ -1,4 +1,4 @@
-const mailConfig = require('../config/mailConfig');
+const mailConfig = require('../configs/mailConfig');
 
 async function prepareHtmlBody(outputArray) {
   let html = `<html>
