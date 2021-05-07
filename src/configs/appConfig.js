@@ -5,6 +5,6 @@ const STATE = 'BIHAR';
 const DISTRICT = 'PATNA';
 // beneficiary configs
 const EMAIL = 'asinha093@gmail.com';
-const AGE = 28;
+const AGE = 45;
 
 module.exports = { FINDBYPINCODE, PINCODE, STATE, DISTRICT, EMAIL, AGE };

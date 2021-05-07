@@ -54,7 +54,6 @@ const DISTRICT = 'PATNA';
 // beneficiary configs
 const EMAIL = 'asinha093@gmail.com';
 const AGE = 28;
-
 ```
 When you set **FINDBYPINCODE = false**, the application will fetch vaccination slots by district value mentioned in this config file.
 
