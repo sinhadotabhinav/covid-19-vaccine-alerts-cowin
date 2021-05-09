@@ -3,6 +3,7 @@ const moment = require('moment');
 const cron = require('node-cron');
 const axios = require('axios');
 const appConfig = require('./configs/appConfig');
+const mailConfig = require('./configs/mailConfig');
 const schedulerConfig = require('./configs/schedulerConfig');
 const alerts = require('./services/alerts');
 const routes = require('./api/routes');
@@ -10,13 +11,15 @@ const locations = require('./utilities/locations');
 const appointments = require('./utilities/appointments');
 const htmlBuilder = require('./utilities/htmlBuilder');
 
+let runCounter = 0;
 let vaccinationSlots = [];
 
 async function main() {
   try {
-    cron.schedule(schedulerConfig.SCHEDULE, async () => {
-      await fetchVaccinationSlots();
-    });
+    await fetchVaccinationSlots();
+    // cron.schedule(schedulerConfig.SCHEDULE, async () => {
+    //   await fetchVaccinationSlots();
+    // });
   } catch (e) {
     console.log('There was an error fetching vaccine slots: ' + JSON.stringify(e, null, 2));
     throw e;
@@ -32,20 +35,20 @@ async function fetchVaccinationSlots() {
         let pincodeArray = appConfig.PINCODE.split(',');
         for( counter = 0; counter < pincodeArray.length; counter++) {
           if (pincodeArray[counter].toString().length < 6) {
-            console.log('Invalid pincode ' + pincodeArray[counter] + ' provided in config file: (src/config/appConfig.js)');
+            console.log('Invalid pincode ' + pincodeArray[counter] + ' provided in config file: (src/config/appConfig.js).');
             pincodeArray.splice(counter, 1);
           }
         }
         getAppointmentsByPincode(pincodeArray, dates);
       } else if (appConfig.PINCODE.toString().length < 6) {
-        throw 'Application is set to fetch vaccine slots by pincode but no pincode/ invalid pincode provided in config file: (src/config/appConfig.js)';
+        throw 'Application is set to fetch vaccine slots by pincode but no pincode/ invalid pincode provided in config file: (src/config/appConfig.js).';
       } else {
         pincodeArray.push(appConfig.PINCODE);
         getAppointmentsByPincode(pincodeArray, dates);
       }
     } else {
       if (appConfig.DISTRICT.length == 0) {
-        throw 'Application is set to fetch vaccine slots by district but no district name provided in config file: (src/config/appConfig.js)';
+        throw 'Application is set to fetch vaccine slots by district but no district name provided in config file: (src/config/appConfig.js).';
       }
       getAppointmentsByDistrict(dates);
     }
@@ -77,9 +80,9 @@ async function getAppointmentsByDistrict(dates) {
     let stateId = await locations.getStateId(appConfig.STATE);
     let districtId = await locations.getDistrictId(stateId, appConfig.DISTRICT);
     if (stateId == undefined) {
-      throw 'Unable to find state id. Please verify state name in config file: src/config/appConfig.js';
+      throw 'Unable to find state id. Please verify state name in config file: src/config/appConfig.js.';
     } else if (districtId == undefined) {
-      throw 'Unable to find district id. Please verify district name in config file: src/config/appConfig.js';
+      throw 'Unable to find district id. Please verify district name in config file: src/config/appConfig.js.';
     }
     for await (const date of dates) {
       let slots = await routes.getVaccinationSlotsByDistrict(districtId, date)
@@ -110,28 +113,35 @@ async function getTwoWeekDateArray() {
 
 async function sendEmailAlert(slotsArray) {
   let outputArray = [];
-  if (slotsArray[0] == undefined) {
-    console.log('No sessions to process at this time');
-  } else {
-    for(let counter1 = 0; counter1 < slotsArray.length; counter1++) {
+  for(let counter1 = 0; counter1 < slotsArray.length; counter1++) {
+    if (slotsArray[counter1] != undefined || slotsArray[counter1] != undefined && slotsArray[counter1].length > 0) {
       for(let counter2 = 0; counter2 < slotsArray[counter1].length; counter2++) {
         outputArray.push(slotsArray[counter1][counter2]);
       }
     }
-    if (Boolean(await appointments.compareVaccinationSlots(outputArray, vaccinationSlots))) {
-      console.log('No new sessions to process at this time');
-    } else {
-      let htmlBody = await htmlBuilder.prepareHtmlBody(outputArray);
-      vaccinationSlots = outputArray;
-      alerts.sendEmailAlert(htmlBody, (err, result) => {
+  }
+  if (outputArray.length > 0 && !Boolean(await appointments.compareVaccinationSlots(outputArray, vaccinationSlots))) {
+    vaccinationSlots = outputArray;
+    alerts.sendEmailAlert(mailConfig.SUBJECT, await htmlBuilder.prepareHtmlBody(outputArray), (err, result) => {
+      if(err) {
+        console.error({err});
+      } else {
+        console.log('New sessions have been processed and sent as an email alert to recipient(s).');
+      }
+    });
+  } else {
+    console.log('No new sessions to process at this time.');
+    if (runCounter == 0) {
+      alerts.sendEmailAlert(mailConfig.FIRST_EMAIL_SUBJECT, await htmlBuilder.prepareFirstEmail(), (err, result) => {
         if(err) {
           console.error({err});
         } else {
-          console.log('New sessions have been processed and sent as an email alert');
+          console.log('Welcome email alert has been sent to recipient(s).');
         }
-      })
+      });
     }
   }
+  runCounter++;
 };
 
 main().then(() => {

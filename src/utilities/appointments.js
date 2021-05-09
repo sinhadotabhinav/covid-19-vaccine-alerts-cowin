@@ -14,7 +14,7 @@ async function compareVaccinationSlots(outputArray, vaccinationSlots) {
     let equalCount = 0;
     for(let counter = 0; counter < outputArray.length; counter++) {
       if (JSON.stringify(outputArray[counter]) == JSON.stringify(vaccinationSlots[counter])) {
-        equalCount = equalCount + 1;
+        equalCount++;
       }
     }
     if (equalCount == outputArray.length) {

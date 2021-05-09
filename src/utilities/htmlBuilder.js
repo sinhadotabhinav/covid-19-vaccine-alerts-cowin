@@ -32,7 +32,7 @@ async function prepareHtmlBody(outputArray) {
   </head>
   <body>
     <div style="display: block;">
-      <p>${mailConfig.BODY}. Login to <a href="https://www.cowin.gov.in/home">COWIN portal</a> to book your appointment now</p>
+      <p>${mailConfig.BODY} Login to <a href="https://www.cowin.gov.in/home">COWIN portal</a> to book your appointment now</p>
       <p>Total number of slots: ${outputArray.length}. Find details below: \n<\p>
       <table>
         <tr>
@@ -89,4 +89,40 @@ async function prepareHtmlBody(outputArray) {
   return html;
 }
 
-module.exports = { prepareHtmlBody };
+async function prepareFirstEmail() {
+  return `<html>
+  <head>
+    <style>
+      img {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+        width: 150px;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="display: block;">
+      <p>${mailConfig.FIRST_EMAIL_BODY}<\p>
+    </div>
+  </body>\n
+  <br><br><br>
+  <div style="display: flex;">
+    <div style="flex: 50%; padding: 5px;">
+      <a href="https://www.cowin.gov.in/home">
+        <img
+          src="https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/assets/cowin-logo.png?raw=true"
+          alt="COWIN platform">
+      </a>
+    </div>
+    <div style="flex: 50%; padding: 5px;">
+      <a href="https://www.mohfw.gov.in/covid_vaccination/vaccination/faqs.html">
+        <img
+          src="https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/assets/vaccine.png?raw=true"
+          alt="MOHFW India">
+      </a>
+    </div>
+  </div>\n</html>`;
+}
+
+module.exports = { prepareHtmlBody, prepareFirstEmail };
