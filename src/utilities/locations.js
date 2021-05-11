@@ -1,5 +1,5 @@
-var stateJson = require('../models/states.json');
 const routes = require('../api/routes');
+var stateJson = require('../models/states.json');
 
 function getStateId (state) {
   for(var counter = 0; counter < stateJson['states'].length; counter++) {

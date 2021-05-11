@@ -10,12 +10,12 @@ let mailerTransport = mailer.createTransport({
   }
 });
 
-function sendEmailAlert (htmlBody, callback) {
+function sendEmailAlert (subject, htmlBody, callback) {
   let options = {
     from: String(mailConfig.SENDER + `<${appConfig.EMAIL}>`),
     to: mailConfig.RECIPIENT,
-    subject: mailConfig.SUBJECT,
-    text: mailConfig.BODY,
+    subject: subject,
+    text: 'Email alert',
     html: htmlBody
   };
   mailerTransport.sendMail(options, (error, info) => {

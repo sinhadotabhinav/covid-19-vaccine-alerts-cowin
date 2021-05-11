@@ -12,7 +12,7 @@ async function getStates() {
       if (result.status == apiConfig.STATUS_OK) {
         return result;
       } else {
-        throw 'Unable to get list of states, status code ' + result.status + ': ' + result.statusText;
+        throw 'Unable to get list of states, status code', result.status, ':', result.statusText;
       }
     })
 }
@@ -28,7 +28,7 @@ async function getDistricts(districtId) {
       if (result.status == apiConfig.STATUS_OK) {
         return result;
       } else {
-        throw 'Unable to get list of districts, status code ' + result.status + ': ' + result.statusText;
+        throw 'Unable to get list of districts, status code', result.status, ':', result.statusText;
       }
     })
 }
@@ -44,7 +44,7 @@ async function getVaccinationSlotsByPincode(pinCode, date) {
       if (result.status == apiConfig.STATUS_OK) {
         return result;
       } else {
-        throw 'Unable to get vaccine sessions by pincode, status code ' + result.status + ': ' + result.statusText;
+        throw 'Unable to get vaccine sessions by pincode, status code', result.status, ':', result.statusText;
       }
     })
 }
@@ -60,7 +60,7 @@ async function getVaccinationSlotsByDistrict(districtId, date) {
       if (result.status == apiConfig.STATUS_OK) {
         return result;
       } else {
-        throw 'Unable to get vaccine sessions by distict, status code ' + result.status + ': ' + result.statusText;
+        throw 'Unable to get vaccine sessions by distict, status code', result.status, ':', result.statusText;
       }
     })
 }

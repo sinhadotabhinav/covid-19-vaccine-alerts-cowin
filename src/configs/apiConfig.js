@@ -10,6 +10,7 @@ const STATES_URI = '/admin/location/states';
 const DISTRICTS_URI = '/admin/location/districts/';
 const APPOINTMENTS_PINCODE_URI = '/appointment/sessions/public/findByPin';
 const APPOINTMENTS_DISTRICTS_URI = '/appointment/sessions/public/findByDistrict';
+
 let xApiKey = '';
 if (typeof Buffer.from === "function") {
     xApiKey = Buffer.from(X_API_KEY, 'base64');
