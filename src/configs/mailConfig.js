@@ -1,5 +1,5 @@
 const SERVICE_PROVIDER = 'Gmail';
-const RECIPIENT = 'asinha093@gmail.com,gemini.shikha14@gmail.com';
+const RECIPIENT = 'asinha093@gmail.com';
 const SENDER = 'covid-19-vaccine-alerts-cowin';
 const SUBJECT = 'New vaccination slots are available on COWIN. Book appointment now';
 const DAILY_DIGEST_SUBJECT = 'Daily digest: covid-19-vaccine-alerts-cowin';
