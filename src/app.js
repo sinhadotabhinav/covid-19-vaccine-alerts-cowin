@@ -1,28 +1,29 @@
 require('dotenv').config()
-const moment = require('moment');
 const cron = require('node-cron');
-const axios = require('axios');
+const moment = require('moment');
+const parser = require('cron-parser');
+const routes = require('./api/routes')
 const appConfig = require('./configs/appConfig');
 const mailConfig = require('./configs/mailConfig');
-const schedulerConfig = require('./configs/schedulerConfig');
-const alerts = require('./services/alerts');
-const routes = require('./api/routes');
-const locations = require('./utilities/locations');
+const schedulerConfig = require('./configs/schedulerConfig');;
+const alerts = require('./utilities/alerts');
 const appointments = require('./utilities/appointments');
+const dailyDigest = require('./utilities/dailyDigest');
 const htmlBuilder = require('./utilities/htmlBuilder');
+const locations = require('./utilities/locations');
+const logger = require('./utilities/logger');
 
 let runCounter = 0;
+let firstRun = true;
 let vaccinationSlots = [];
 
 async function main() {
   try {
-    await fetchVaccinationSlots();
-    // cron.schedule(schedulerConfig.SCHEDULE, async () => {
-    //   await fetchVaccinationSlots();
-    // });
-  } catch (e) {
-    console.log('There was an error fetching vaccine slots: ' + JSON.stringify(e, null, 2));
-    throw e;
+    cron.schedule(schedulerConfig.SCHEDULE, async function() {
+      await fetchVaccinationSlots();
+    });
+  } catch (error) {
+    console.log(logger.getLog('There was an error fetching vaccine slots: ' + JSON.stringify(error, null, 2)));
   }
 }
 
@@ -35,7 +36,7 @@ async function fetchVaccinationSlots() {
         let pincodeArray = appConfig.PINCODE.split(',');
         for( counter = 0; counter < pincodeArray.length; counter++) {
           if (pincodeArray[counter].toString().length < 6) {
-            console.log('Invalid pincode ' + pincodeArray[counter] + ' provided in config file: (src/config/appConfig.js).');
+            console.log(logger.getLog('Invalid pincode ' + pincodeArray[counter] + ' provided in config file: (src/config/appConfig.js).'));
             pincodeArray.splice(counter, 1);
           }
         }
@@ -52,9 +53,20 @@ async function fetchVaccinationSlots() {
       }
       getAppointmentsByDistrict(dates);
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(logger.getLog(error));
   }
+}
+
+async function getTwoWeekDateArray() {
+  let dateArray = [];
+  let currentDate = moment();
+  for(let counter = 1; counter <= schedulerConfig.DATE_RANGE; counter++) {
+    let date = currentDate.format(schedulerConfig.DATE_FORMAT);
+    dateArray.push(date);
+    currentDate.add(1, 'day');
+  }
+  return dateArray;
 }
 
 async function getAppointmentsByPincode(pincodeArray, dates) {
@@ -66,7 +78,8 @@ async function getAppointmentsByPincode(pincodeArray, dates) {
           return appointments.getFilteredSlots(date, result.data.sessions);
         })
         .catch(function (error) {
-          console.log('Unable to get appointment slots at pincode: ' + pin + ' for the date: ' + date + ', ' + error.response.statusText);
+          console.log(logger.getLog('Unable to get appointment slots at pincode: ' + pin + ' for the date: ' + date +
+           ', ' + error.response.statusText));
         });
       slotsArray.push(slots);
     };
@@ -90,25 +103,15 @@ async function getAppointmentsByDistrict(dates) {
           return appointments.getFilteredSlots(date, result.data.sessions);
         })
         .catch(function (error) {
-          console.log('Unable to get appointment slots at district: ' + districtId + ' for the date: ' + date + ', ' + error.response.statusText);
+          console.log(logger.getLog('Unable to get appointment slots at district: ' + districtId + ' for the date: ' + date +
+           ', ' + error.response.statusText));
         });
       slotsArray.push(slots);
     };
     sendEmailAlert(slotsArray);
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(logger.getLog(error));
   }
-}
-
-async function getTwoWeekDateArray() {
-  let dateArray = [];
-  let currentDate = moment();
-  for(let counter = 1; counter <= schedulerConfig.DATE_RANGE; counter++) {
-    let date = currentDate.format(schedulerConfig.DATE_FORMAT);
-    dateArray.push(date);
-    currentDate.add(1, 'day');
-  }
-  return dateArray;
 }
 
 async function sendEmailAlert(slotsArray) {
@@ -122,28 +125,40 @@ async function sendEmailAlert(slotsArray) {
   }
   if (outputArray.length > 0 && !Boolean(await appointments.compareVaccinationSlots(outputArray, vaccinationSlots))) {
     vaccinationSlots = outputArray;
-    alerts.sendEmailAlert(mailConfig.SUBJECT, await htmlBuilder.prepareHtmlBody(outputArray), (err, result) => {
-      if(err) {
-        console.error({err});
+    alerts.sendEmailAlert(mailConfig.SUBJECT, await htmlBuilder.prepareHtmlBody(outputArray), (error, result) => {
+      if(error) {
+        console.log(logger.getLog(error));
       } else {
-        console.log('New sessions have been processed and sent as an email alert to recipient(s).');
+        console.log(logger.getLog('New sessions have been processed and sent as an email alert to the recipient(s).'));
       }
     });
   } else {
-    console.log('No new sessions to process at this time.');
-    if (runCounter == 0) {
-      alerts.sendEmailAlert(mailConfig.FIRST_EMAIL_SUBJECT, await htmlBuilder.prepareFirstEmail(), (err, result) => {
-        if(err) {
-          console.error({err});
+    console.log(logger.getLog('No new sessions to process at this time.'));
+    if (Boolean(firstRun)) {
+      alerts.sendEmailAlert(mailConfig.FIRST_EMAIL_SUBJECT, await htmlBuilder.prepareFirstEmail(), (error, result) => {
+        if(error) {
+          console.log(logger.getLog(error));
         } else {
-          console.log('Welcome email alert has been sent to recipient(s).');
+          console.log(logger.getLog('Welcome email alert has been sent to the recipient(s).'));
         }
       });
     }
   }
-  runCounter++;
+  firstRun = false;
+  runCounter = runCounter + 1;
+  await dailyDigest.updateRunCounter(runCounter, vaccinationSlots);
+  await resetDailyCounter();
+};
+
+async function resetDailyCounter() {
+  const interval = parser.parseExpression(schedulerConfig.SCHEDULE);
+  let difference = moment(new Date(interval.next().toString())).diff(moment(), 'days', true);
+  if (difference.toFixed() > 0) {
+    await dailyDigest.prepareReport();
+    runCounter = 0;
+  }
 };
 
 main().then(() => {
-  console.log('The covid-19 vaccine alerting application has started!');
+  console.log(logger.getLog('The covid-19 vaccination alerting application has started!'));
 });

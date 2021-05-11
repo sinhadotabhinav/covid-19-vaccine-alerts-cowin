@@ -15,7 +15,7 @@ function sendEmailAlert (subject, htmlBody, callback) {
     from: String(mailConfig.SENDER + `<${appConfig.EMAIL}>`),
     to: mailConfig.RECIPIENT,
     subject: subject,
-    text: mailConfig.BODY,
+    text: 'Email alert',
     html: htmlBody
   };
   mailerTransport.sendMail(options, (error, info) => {
