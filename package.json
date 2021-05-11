@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "asinha093@gmail.com",
-  "license": "Self",
+  "license": "MIT License",
   "dependencies": {
     "axios": "^0.21.1",
     "cron-parser": "^3.5.0",
