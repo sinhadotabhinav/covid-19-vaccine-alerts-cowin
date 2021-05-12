@@ -23,7 +23,7 @@ async function main() {
       await fetchVaccinationSlots();
     });
   } catch (error) {
-    console.log(logger.getLog('There was an error fetching vaccine slots: ' + JSON.stringify(error, null, 2)));
+    console.log(logger.getLog(`There was an error fetching vaccine slots: ${JSON.stringify(error, null, 2)}.`));
   }
 }
 
@@ -36,7 +36,7 @@ async function fetchVaccinationSlots() {
         let pincodeArray = appConfig.PINCODE.split(',');
         for( counter = 0; counter < pincodeArray.length; counter++) {
           if (pincodeArray[counter].toString().length < 6) {
-            console.log(logger.getLog('Invalid pincode ' + pincodeArray[counter] + ' provided in config file: (src/config/appConfig.js).'));
+            console.log(logger.getLog(`Invalid pincode ${pincodeArray[counter]} provided in config file: (src/config/appConfig.js).`));
             pincodeArray.splice(counter, 1);
           }
         }
@@ -78,8 +78,11 @@ async function getAppointmentsByPincode(pincodeArray, dates) {
           return appointments.getFilteredSlots(date, result.data.sessions);
         })
         .catch(function (error) {
-          console.log(logger.getLog('Unable to get appointment slots at pincode: ' + pin + ' for the date: ' + date +
-           ', ' + error.response.statusText));
+          if (error.response.statusText) {
+            console.log(logger.getLog(`Unable to get appointment slots at pincode: ${pin} for the date: ${date}, ${error.response.statusText}.`));
+          } else {
+            console.log(logger.getLog(`Unable to get appointment slots at pincode: ${pin} for the date: ${date}, ${error}.`));
+          }
         });
       slotsArray.push(slots);
     };
@@ -103,8 +106,11 @@ async function getAppointmentsByDistrict(dates) {
           return appointments.getFilteredSlots(date, result.data.sessions);
         })
         .catch(function (error) {
-          console.log(logger.getLog('Unable to get appointment slots at district: ' + districtId + ' for the date: ' + date +
-           ', ' + error.response.statusText));
+          if (error.response.statusText) {
+            console.log(logger.getLog(`Unable to get appointment slots at district: ${districtId} for the date: ${date}, ${error.response.statusText}.`));
+          } else {
+            console.log(logger.getLog(`Unable to get appointment slots at district: ${districtId} for the date: ${date}, ${error}.`));
+          }
         });
       slotsArray.push(slots);
     };
@@ -152,9 +158,11 @@ async function sendEmailAlert(slotsArray) {
 
 async function resetDailyCounter() {
   const interval = parser.parseExpression(schedulerConfig.SCHEDULE);
-  let lastRun = moment().date() == moment(new Date(interval.next().toString())).date() ? false : true;
+  let nextRun = interval.next().toString();
+  let lastRun = moment().date() == moment(new Date(nextRun)).date() &&
+    moment().month() == moment(new Date(nextRun)).month() ? false : true;
   if (Boolean(lastRun)) {
-    await dailyDigest.prepareReport();
+    await setTimeout(() => { dailyDigest.prepareReport(); }, schedulerConfig.DELAY);
     runCounter = 0;
   }
 };

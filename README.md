@@ -1,4 +1,4 @@
-# COVID-19 Vaccine Alerts - COWIN
+s# COVID-19 Vaccine Alerts - COWIN
 
 This repository is an alerting application that sends email notifications to beneficiaries in India using [COWIN platform](https://www.cowin.gov.in/home) for vaccine availability. The application interacts with the [COWIN API](https://apisetu.gov.in/public/marketplace/api/cowin) at regular intervals to find vaccination slots available at your pin code location(s) or entire district along with a minimum age limit. So, if you are currently waiting to find slots in your region and do not see any slots for your age range then, you can utilise this application to receive alerts on your email address when there are slots available for you. This way you will be able to book your appointments on time. Remember, vaccination is highly beneficial for you in this horrific time of crisis. Get your jab and protect yourself from serious illness.
 
@@ -63,10 +63,10 @@ const SERVICE_PROVIDER = 'Gmail';
 const RECIPIENT = 'mail1@gmail.com,mail2@gmail.com,mail3@gmail.com';
 ```
 
-Finally, you can also alter the date range with which the application will fetch vaccination slots by customising **DATE_RANGE** value in [`src/configs/schedulerConfig.js`](https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/configs/schedulerConfig.js) file. By default it is set to **7** but, you can change it to 10 or 15 for example, based on your need. The config file also allows changes in the periodic schedule with which the application runs. By default, **SCHEDULE** value depicts a cron schedule **every hour at minute 15 and second 0**. To alter this schedule, you need to be familiar with the [cron scheduler](https://linuxhint.com/cron_jobs_complete_beginners_tutorial/#:~:text=The%20scheduled%20commands%20and%20scripts,Task%20Scheduler%20in%20Windows%20OS). I use [Crontab Guru](https://crontab.guru) website to test my cron schedules.
+Finally, you can also alter the date range with which the application will fetch vaccination slots by customising **DATE_RANGE** value in [`src/configs/schedulerConfig.js`](https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/blob/master/src/configs/schedulerConfig.js) file. By default it is set to **7** but, you can change it to 10 or 15 for example, based on your need. The config file also allows changes in the periodic schedule with which the application runs. By default, **SCHEDULE** value depicts a cron schedule **every hour at minute 5 and second 0**. To alter this schedule, you need to be familiar with the [cron scheduler](https://linuxhint.com/cron_jobs_complete_beginners_tutorial/#:~:text=The%20scheduled%20commands%20and%20scripts,Task%20Scheduler%20in%20Windows%20OS). I use [Crontab Guru](https://crontab.guru) website to test my cron schedules.
 
 ```
-const SCHEDULE = '0 15 * * * *';
+const SCHEDULE = '0 5 * * * *';
 const DATE_RANGE = 7;
 ```
 
