@@ -1,6 +1,6 @@
 {
   "name": "covid-19-vaccine-alerts-cowin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This is an alerting application that sends email notifications to beneficiaries in India using COWIN platform for vaccine availability",
   "main": "src/app.js",
   "scripts": {
