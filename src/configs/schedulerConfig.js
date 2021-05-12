@@ -1,4 +1,4 @@
-const SCHEDULE = '15 * * * *';
+const SCHEDULE = '0 15 * * * *';
 const DATE_RANGE = 7;
 const DATE_FORMAT = 'DD-MM-YYYY';
 

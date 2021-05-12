@@ -152,8 +152,8 @@ async function sendEmailAlert(slotsArray) {
 
 async function resetDailyCounter() {
   const interval = parser.parseExpression(schedulerConfig.SCHEDULE);
-  let difference = moment(new Date(interval.next().toString())).diff(moment(), 'days', true);
-  if (difference.toFixed() > 0) {
+  let lastRun = moment().date() == moment(new Date(interval.next().toString())).date() ? false : true;
+  if (Boolean(lastRun)) {
     await dailyDigest.prepareReport();
     runCounter = 0;
   }
