@@ -152,7 +152,7 @@ async function sendEmailAlert(slotsArray) {
   }
   firstRun = false;
   runCounter = runCounter + 1;
-  await dailyDigest.updateRunCounter(runCounter, vaccinationSlots);
+  await dailyDigest.updateRunStatistics(runCounter, outputArray);
   await resetDailyCounter();
 };
 

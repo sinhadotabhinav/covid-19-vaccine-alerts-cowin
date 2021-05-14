@@ -84,7 +84,7 @@ async function prepareDailyDigestEmail(runs, centers, regionType, region) {
       <div style="display: block;">
         <p>Welcome to the ${mailConfig.SENDER} daily digest. A summary of results obtained today are gathered and presented below:<\p>
         <p>The application periodically checked for new vaccination slots ${runs} times today.<\p>
-        <p>Total number of vaccination centers with available slots found for ${regionType} \(${region}\) were: ${centers}<\p>
+        <p>Total number of vaccination centers with available slots found today for ${regionType} \(${region}\) were: ${centers}<\p>
         <p>The application will continue to look for new slots in your requested region and send alerts tomorrow.<\p>
       </div>
     </body>\n
