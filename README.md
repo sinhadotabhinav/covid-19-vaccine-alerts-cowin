@@ -1,4 +1,4 @@
-s# COVID-19 Vaccine Alerts - COWIN
+# COVID-19 Vaccine Alerts - COWIN
 
 This repository is an alerting application that sends email notifications to beneficiaries in India using [COWIN platform](https://www.cowin.gov.in/home) for vaccine availability. The application interacts with the [COWIN API](https://apisetu.gov.in/public/marketplace/api/cowin) at regular intervals to find vaccination slots available at your pin code location(s) or entire district along with a minimum age limit. So, if you are currently waiting to find slots in your region and do not see any slots for your age range then, you can utilise this application to receive alerts on your email address when there are slots available for you. This way you will be able to book your appointments on time. Remember, vaccination is highly beneficial for you in this horrific time of crisis. Get your jab and protect yourself from serious illness.
 
