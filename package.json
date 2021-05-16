@@ -4,7 +4,7 @@
   "description": "This is an alerting application that sends email notifications to beneficiaries in India using COWIN platform for vaccine availability",
   "main": "src/app.js",
   "scripts": {
-    "start": "node src/app",
+    "start": "npm install && node src/app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "asinha093@gmail.com",
