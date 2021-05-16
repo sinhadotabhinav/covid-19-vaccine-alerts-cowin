@@ -4,7 +4,7 @@
   "description": "This is an alerting application that sends email notifications to beneficiaries in India using COWIN platform for vaccine availability",
   "main": "src/app.js",
   "scripts": {
-    "start": "npm install && node src/app",
+    "start": "node src/app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "asinha093@gmail.com",
@@ -15,9 +15,7 @@
     "dotenv": "^8.2.0",
     "moment": "^2.29.1",
     "node-cron": "^3.0.0",
+    "nodemailer": "^6.6.0",
     "pm2": "^4.5.6"
-  },
-  "devDependencies": {
-    "nodemailer": "^6.6.0"
   }
 }
