@@ -86,6 +86,18 @@ To shutdown the application run:
 
 `$ pm2 stop src/app.js && pm2 delete src/app.js`
 
-## Development
+## Contributing
 
-This repository is open to contributions and discussion. For any other questions, you can reach out via email at `asinha093@gmail.com`.
+Contributions you make are greatly appreciated and always welcome. You can do so by:
+
+1) Forking the github project
+2) Creating your feature branch for example: `git checkout -b feature/my-interesting-feature`
+3) Commiting your changes using `git commit -m "my-interesting-feature-update"`
+4) Pushing to the branch using `git push origin feature/my-interesting-feature`
+5) Finally, opening a Pull Request for review
+
+If you would like to request a feature or report issues, please use the [Issues tracker](https://github.com/sinhadotabhinav/covid-19-vaccine-alerts-cowin/issues)
+
+## Discussion
+
+For any other questions or discussions, you can reach out to me via email at `asinha093@gmail.com`.
